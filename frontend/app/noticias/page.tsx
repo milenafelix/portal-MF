@@ -1,17 +1,12 @@
-import { client } from '../../src/sanity'
-import Link from 'next/link'
-import imageUrlBuilder from '@sanity/image-url'
+import Image from 'next/image';
+import Link from 'next/link';
+import { getPosts, urlFor } from '../../src/lib/posts';
+import type { PostSummary } from '../../src/types/post';
 
-const builder = imageUrlBuilder(client)
-function urlFor(source: any) {
-  return builder.image(source)
-}
-
-// GROQ Query: Busca apenas posts marcados como "Notícia"
-const QUERY = `*[_type == "post" && contentType == "Notícia"] | order(publishedAt desc)`
+const QUERY = `*[_type == "post" && contentType == "Notícia"] | order(publishedAt desc)`;
 
 export default async function TodasNoticias() {
-  const posts = await client.fetch(QUERY)
+  const posts = await getPosts(QUERY);
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 font-sans bg-black min-h-screen">
@@ -23,13 +18,15 @@ export default async function TodasNoticias() {
 
       {/* GRID COMPLETO */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {posts.map((post: any) => (
-          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[280px] flex items-end p-4 rounded-lg overflow-hidden group shadow-lg">
+        {posts.map((post: PostSummary) => (
+          <Link key={post._id} href={`/post/${encodeURIComponent(post.slug?.current ?? post._id)}`} className="relative h-[280px] flex items-end p-4 rounded-lg overflow-hidden group shadow-lg">
             {post.mainImage && (
-              <img 
-                src={urlFor(post.mainImage).url()} 
+              <Image
+                src={urlFor(post.mainImage).url()}
                 alt={post.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                fill
+                sizes="(max-width: 768px) 100vw, 25vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />

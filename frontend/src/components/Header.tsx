@@ -1,22 +1,30 @@
 "use client"
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Header() {
-  const [dataAtual, setDataAtual] = useState(new Date())
-  const [mounted, setMounted] = useState(false) // <- Cria o estado para saber se já carregou no navegador
+  const [dataAtual, setDataAtual] = useState<Date | null>(null)
 
-  // Atualiza o relógio a cada segundo e avisa que o componente montou
   useEffect(() => {
-    setMounted(true) // <- Avisa: "Ok, já estamos no navegador!"
-    const timer = setInterval(() => setDataAtual(new Date()), 1000)
-    return () => clearInterval(timer)
+    const timer = window.setInterval(() => {
+      setDataAtual(new Date())
+    }, 1000)
+
+    return () => window.clearInterval(timer)
   }, [])
 
-  // Formata a data (Ex: Qui, 16 Jul 2026) e a hora
-  const dataFormatada = dataAtual.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '')
-  const horaFormatada = dataAtual.toLocaleTimeString('pt-BR')
+  const dataFormatada = dataAtual
+    ? dataAtual
+        .toLocaleDateString('pt-BR', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace('.', '')
+    : ''
+  const horaFormatada = dataAtual ? dataAtual.toLocaleTimeString('pt-BR') : ''
 
   return (
     <header className="w-full font-sans">
@@ -27,8 +35,7 @@ export default function Header() {
           
           {/* Lado Esquerdo: Data e Relógio roxo */}
           <div className="flex items-center gap-3">
-            {/* O SEGREDO ESTÁ AQUI: Só mostra o relógio se o site já montou no navegador */}
-            {mounted ? (
+            {dataAtual ? (
               <>
                 <span className="capitalize">{dataFormatada}</span>
                 <span className="bg-purple-600 text-white font-bold px-2 py-1 rounded-sm">
@@ -36,8 +43,7 @@ export default function Header() {
                 </span>
               </>
             ) : (
-              // Um espaço vazio invisível para não quebrar o layout enquanto o relógio não aparece
-              <div className="w-32 h-6"></div> 
+              <div className="h-6 w-32" />
             )}
           </div>
 

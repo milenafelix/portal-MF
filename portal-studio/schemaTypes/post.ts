@@ -1,41 +1,43 @@
-import { defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'post',
-  title: 'Notícia',
+  title: 'Post',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Título da Matéria',
+      title: 'Título',
       type: 'string',
+      validation: (Rule) => Rule.required().min(5).max(120),
     }),
     defineField({
       name: 'slug',
-      title: 'URL (Slug)',
+      title: 'Slug',
       type: 'slug',
       options: {
         source: 'title',
         maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'mainImage',
-      title: 'Imagem de Capa',
+      title: 'Imagem de capa',
       type: 'image',
       options: {
-        hotspot: true, 
+        hotspot: true,
       },
     }),
     defineField({
       name: 'publishedAt',
-      title: 'Data de Publicação',
+      title: 'Data de publicação',
       type: 'datetime',
+      initialValue: () => new Date().toISOString(),
     }),
-
     defineField({
       name: 'contentType',
-      title: 'Tipo de Conteúdo',
+      title: 'Tipo de conteúdo',
       type: 'string',
       options: {
         list: [
@@ -44,8 +46,9 @@ export default defineType({
           { title: 'Resenha', value: 'Resenha' },
           { title: 'Review', value: 'Review' },
         ],
-        layout: 'radio' // Mostra como bolinhas de marcar no painel para ser mais rápido
-      }
+        layout: 'radio',
+      },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'category',
@@ -59,29 +62,35 @@ export default defineType({
           { title: 'Games', value: 'Games' },
           { title: 'Eventos', value: 'Eventos' },
         ],
-        layout: 'radio'
-      }
+        layout: 'radio',
+      },
     }),
-
     defineField({
       name: 'body',
-      title: 'Texto da Notícia',
+      title: 'Conteúdo',
       type: 'array',
       of: [
-        { 
+        {
           type: 'block',
-          // AQUI DEFINIMOS OS ESTILOS DE TEXTO DISPONÍVEIS
           styles: [
             { title: 'Normal', value: 'normal' },
             { title: 'Título 1', value: 'h1' },
             { title: 'Título 2', value: 'h2' },
             { title: 'Título 3', value: 'h3' },
             { title: 'Citação', value: 'blockquote' },
-            { title: 'Centralizado', value: 'center' } // <- NOSSO NOVO ESTILO
-          ]
+            { title: 'Centralizado', value: 'center' },
+          ],
         },
-        { type: 'image', options: { hotspot: true } }
+        { type: 'image', options: { hotspot: true } },
       ],
+      validation: (Rule) => Rule.required().min(1),
     }),
   ],
-})
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'contentType',
+      media: 'mainImage',
+    },
+  },
+});

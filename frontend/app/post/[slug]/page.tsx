@@ -1,37 +1,34 @@
-import { client } from '../../../src/sanity'
-import imageUrlBuilder from '@sanity/image-url'
-import { PortableText } from '@portabletext/react'
-import Link from 'next/link'
+import Image from 'next/image';
+import { PortableText } from '@portabletext/react';
+import Link from 'next/link';
+import { getPostBySlug, urlFor } from '../../../src/lib/posts';
+import type { Post, SanityImage } from '../../../src/types/post';
 
-// Construtor de imagens do Sanity
-const builder = imageUrlBuilder(client)
-function urlFor(source: any) {
-  return builder.image(source)
-}
-
-// NOVA REGRA: Ensinando o PortableText a renderizar as imagens do meio da matéria
 const ptComponents = {
   types: {
-    image: ({ value }: any) => {
-      if (!value?.asset?._ref) return null
+    image: ({ value }: { value?: SanityImage & { alt?: string } }) => {
+      if (!value?.asset?._ref) {
+        return null;
+      }
+
       return (
-        <img
+        <Image
           src={urlFor(value).url()}
           alt={value.alt || 'Imagem da matéria'}
-          className="w-full h-auto rounded-xl my-8 object-cover"
+          width={1200}
+          height={800}
+          className="my-8 h-auto w-full rounded-xl object-cover"
         />
-      )
-    }
-  }
-}
+      );
+    },
+  },
+};
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
-  
-  const resolvedParams = await params
-  const slug = resolvedParams.slug
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
 
-  const QUERY = `*[_type == "post" && slug.current == $slug][0]`
-  const post = await client.fetch(QUERY, { slug: slug })
+  const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
     return (
@@ -48,10 +45,12 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       {/* CABEÇALHO DO POST (IMAGEM PRINCIPAL E TÍTULO) */}
       <div className="relative w-full h-[60vh] md:h-[70vh]">
         {post.mainImage && (
-          <img 
-            src={urlFor(post.mainImage).url()} 
+          <Image
+            src={urlFor(post.mainImage).url()}
             alt={post.title}
-            className="w-full h-full object-cover opacity-60" 
+            fill
+            priority
+            className="object-cover opacity-60"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />

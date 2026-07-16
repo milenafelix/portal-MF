@@ -9,8 +9,11 @@ import Footer from "../src/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Portal MF",
-  description: "As melhores notícias de Cultura Pop",
+  title: {
+    default: "Portal MF",
+    template: "%s | Portal MF",
+  },
+  description: "As melhores notícias de cultura pop, resenhas e críticas em um só lugar.",
 };
 
 export default function RootLayout({
