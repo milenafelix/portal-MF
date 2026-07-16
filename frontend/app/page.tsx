@@ -188,7 +188,7 @@ export default async function Home() {
       {/* GRID INFERIOR DE NOTÍCIAS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {resenhasECriticas.map((post: PostSummary) => (
-          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
+          <Link key={post._id} href={`/post/${encodeURIComponent(post.slug?.current ?? post._id)}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
             {post.mainImage && (
               <Image
                 src={urlFor(post.mainImage).url()}
