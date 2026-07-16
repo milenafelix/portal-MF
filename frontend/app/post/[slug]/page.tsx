@@ -1,4 +1,4 @@
-import { client } from '../../../src/sanity' // Ajuste o caminho se necessário
+import { client } from '../../../src/sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import { PortableText } from '@portabletext/react'
 import Link from 'next/link'
@@ -9,13 +9,30 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-// O Next.js passa o "slug" da URL automaticamente pelos params
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  // Busca no Sanity o post específico que tenha o slug da URL
-  const QUERY = `*[_type == "post" && slug.current == $slug][0]`
-  const post = await client.fetch(QUERY, { slug: params.slug })
+// NOVA REGRA: Ensinando o PortableText a renderizar as imagens do meio da matéria
+const ptComponents = {
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset?._ref) return null
+      return (
+        <img
+          src={urlFor(value).url()}
+          alt={value.alt || 'Imagem da matéria'}
+          className="w-full h-auto rounded-xl my-8 object-cover"
+        />
+      )
+    }
+  }
+}
 
-  // Se o post não existir ou houver erro de digitação na URL
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  
+  const resolvedParams = await params
+  const slug = resolvedParams.slug
+
+  const QUERY = `*[_type == "post" && slug.current == $slug][0]`
+  const post = await client.fetch(QUERY, { slug: slug })
+
   if (!post) {
     return (
       <main className="min-h-screen bg-black flex flex-col items-center justify-center text-white font-sans">
@@ -28,7 +45,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
   return (
     <main className="min-h-screen bg-black font-sans pb-20">
       
-      {/* CABEÇALHO DO POST (IMAGEM E TÍTULO) */}
+      {/* CABEÇALHO DO POST (IMAGEM PRINCIPAL E TÍTULO) */}
       <div className="relative w-full h-[60vh] md:h-[70vh]">
         {post.mainImage && (
           <img 
@@ -55,18 +72,17 @@ export default async function PostPage({ params }: { params: { slug: string } })
           )}
         </div>
       </div>
-
-      {/* CORPO DO TEXTO (RESENHA/NOTÍCIA) */}
-      <div className="max-w-4xl mx-auto px-6 mt-12 text-gray-300 text-lg leading-relaxed">
-        {/* A classe prose ajuda a formatar automaticamente o texto rico */}
-        <div className="prose prose-invert prose-lg prose-purple max-w-none">
-          {post.body ? (
-            <PortableText value={post.body} />
-          ) : (
-            <p>Conteúdo não disponível.</p>
-          )}
-        </div>
-      </div>
+            {/* CORPO DO TEXTO (RESENHA/NOTÍCIA) */}
+                <div className="max-w-4xl mx-auto px-6 mt-12 text-gray-300 text-lg leading-relaxed">
+                    <div className="prose prose-invert prose-lg prose-purple max-w-none">
+                    {/* Aqui aplicamos a regra ptComponents para as imagens funcionarem */}
+                    {post.body ? (
+                        <PortableText value={post.body} components={ptComponents} />
+                    ) : (
+                        <p>Conteúdo não disponível.</p>
+                    )}
+                    </div>
+                </div>
       
     </main>
   )

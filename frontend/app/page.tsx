@@ -34,7 +34,7 @@ export default async function Home() {
         {/* Lado Esquerdo: Manchete Principal (Hero) */}
         {destaquePrincipal && (
           <Link 
-            href={`/noticia/${destaquePrincipal.slug.current}`} 
+            href={`/post/${destaquePrincipal.slug.current}`} 
             className="lg:col-span-2 relative h-[400px] md:h-[500px] flex items-end p-8 rounded-lg overflow-hidden group"
           >
             {destaquePrincipal.mainImage && (
@@ -92,7 +92,7 @@ export default async function Home() {
           {/* Lista de Notícias */}
           <div className="flex flex-col gap-4 flex-1 justify-between">
             {ultimasNoticias.map((post: any) => (
-              <Link key={post._id} href={`/noticia/${post.slug.current}`} className="flex gap-4 items-center group bg-gray-950 p-2 rounded hover:bg-gray-900 transition-colors">
+              <Link key={post._id} href={`/post/${post.slug.current}`} className="flex gap-4 items-center group bg-gray-950 p-2 rounded hover:bg-gray-900 transition-colors">
                 {post.mainImage ? (
                   <img 
                     src={urlFor(post.mainImage).width(200).url()} 
@@ -144,7 +144,7 @@ export default async function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         {gridNoticias.map((post: any) => (
-          <Link key={post._id} href={`/noticia/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
+          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
             {post.mainImage && (
               <img 
                 src={urlFor(post.mainImage).url()} 
@@ -195,7 +195,7 @@ export default async function Home() {
       {/* GRID INFERIOR DE NOTÍCIAS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {resenhasECriticas.map((post: any) => (
-          <Link key={post._id} href={`/noticia/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
+          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
             {post.mainImage && (
               <img 
                 src={urlFor(post.mainImage).url()} 
