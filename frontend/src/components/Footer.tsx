@@ -32,8 +32,8 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="#" className="hover:text-purple-400 transition-colors flex items-center gap-2">
-                <span className="text-purple-600">▪</span> Eventos e Coberturas
+              <Link href="/noticias" className="hover:text-purple-400 transition-colors flex items-center gap-2">
+                <span className="text-purple-600">▪</span> Notícias em destaque
               </Link>
             </li>
           </ul>
@@ -45,8 +45,8 @@ export default function Footer() {
             Siga o Portal
           </h3>
           <div className="flex gap-3 mb-6">
-            <a href="#" className="w-10 h-10 rounded bg-gray-900 flex items-center justify-center hover:bg-pink-600 transition-colors text-white font-bold">
-              ig
+            <a href="mailto:milenafelix.omdq@gmail.com" className="flex h-10 items-center rounded bg-gray-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-pink-600">
+              Contato
             </a>
           </div>
           <p className="text-sm text-gray-400">

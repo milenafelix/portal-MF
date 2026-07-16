@@ -122,57 +122,6 @@ export default async function Home() {
         </div>
       </div>
 
-
-      {/* ========================================= */}
-      {/* NOVA SEÇÃO: NOTÍCIAS */}
-      {/* ========================================= 
-      <div className="border-b-2 border-purple-600 mb-6 flex justify-between items-end">
-        <div className="bg-purple-600 text-white px-6 py-2 uppercase font-extrabold tracking-widest skew-x-[-12deg] origin-bottom-left -ml-2">
-          <span className="skew-x-[12deg] block ml-2 text-sm">Últimas Notícias</span>
-        </div>
-        <Link href="/noticias" className="text-purple-400 hover:text-purple-300 text-sm font-bold mb-1 transition-colors">
-          Ver tudo →
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-        {gridNoticias.map((post: any) => (
-          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[250px] flex items-end p-4 rounded overflow-hidden group">
-            {post.mainImage && (
-              <img 
-                src={urlFor(post.mainImage).url()} 
-                alt={post.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-            <div className="relative z-10 w-full">
-              
-              <div className="flex flex-wrap gap-2 mb-2">
-                {post.contentType && (
-                   <span className="bg-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">
-                     {post.contentType}
-                   </span>
-                )}
-                {post.category && (
-                   <span className="bg-black/80 border border-purple-600 text-purple-300 text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">
-                     {post.category}
-                   </span>
-                )}
-              </div>
-
-              <h3 className="text-lg font-bold text-white leading-tight line-clamp-2 group-hover:text-purple-300 transition-colors">
-                {post.title}
-              </h3>
-              {post.publishedAt && (
-                <p className="text-gray-400 text-[11px] mt-2 flex items-center gap-1">
-                  🕒 {new Date(post.publishedAt).toLocaleDateString('pt-BR')}
-                </p>
-              )}
-            </div>
-          </Link>
-        ))}
-      </div>*/}
       {/* ========================================= */}
 
       {/* TÍTULO DA SEÇÃO INCLINADO COM BOTÃO VER TUDO */}
