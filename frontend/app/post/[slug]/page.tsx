@@ -1,0 +1,73 @@
+import { client } from '../../../src/sanity' // Ajuste o caminho se necessário
+import imageUrlBuilder from '@sanity/image-url'
+import { PortableText } from '@portabletext/react'
+import Link from 'next/link'
+
+// Construtor de imagens do Sanity
+const builder = imageUrlBuilder(client)
+function urlFor(source: any) {
+  return builder.image(source)
+}
+
+// O Next.js passa o "slug" da URL automaticamente pelos params
+export default async function PostPage({ params }: { params: { slug: string } }) {
+  // Busca no Sanity o post específico que tenha o slug da URL
+  const QUERY = `*[_type == "post" && slug.current == $slug][0]`
+  const post = await client.fetch(QUERY, { slug: params.slug })
+
+  // Se o post não existir ou houver erro de digitação na URL
+  if (!post) {
+    return (
+      <main className="min-h-screen bg-black flex flex-col items-center justify-center text-white font-sans">
+        <h1 className="text-4xl font-bold mb-4">404 - Post não encontrado</h1>
+        <Link href="/" className="text-purple-500 hover:underline">Voltar para a Home</Link>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-black font-sans pb-20">
+      
+      {/* CABEÇALHO DO POST (IMAGEM E TÍTULO) */}
+      <div className="relative w-full h-[60vh] md:h-[70vh]">
+        {post.mainImage && (
+          <img 
+            src={urlFor(post.mainImage).url()} 
+            alt={post.title}
+            className="w-full h-full object-cover opacity-60" 
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        
+        <div className="absolute bottom-0 left-0 w-full max-w-4xl mx-auto px-6 pb-12 right-0">
+          <div className="flex gap-2 mb-4">
+            <span className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-widest">
+              {post.contentType || 'Conteúdo'}
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+            {post.title}
+          </h1>
+          {post.publishedAt && (
+            <p className="text-gray-400 text-sm mt-6">
+              Publicado em {new Date(post.publishedAt).toLocaleDateString('pt-BR')}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* CORPO DO TEXTO (RESENHA/NOTÍCIA) */}
+      <div className="max-w-4xl mx-auto px-6 mt-12 text-gray-300 text-lg leading-relaxed">
+        {/* A classe prose ajuda a formatar automaticamente o texto rico */}
+        <div className="prose prose-invert prose-lg prose-purple max-w-none">
+          {post.body ? (
+            <PortableText value={post.body} />
+          ) : (
+            <p>Conteúdo não disponível.</p>
+          )}
+        </div>
+      </div>
+      
+    </main>
+  )
+}

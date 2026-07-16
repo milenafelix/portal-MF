@@ -24,7 +24,7 @@ export default async function TodasNoticias() {
       {/* GRID COMPLETO */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {posts.map((post: any) => (
-          <Link key={post._id} href={`/noticia/${post.slug.current}`} className="relative h-[280px] flex items-end p-4 rounded-lg overflow-hidden group shadow-lg">
+          <Link key={post._id} href={`/post/${post.slug.current}`} className="relative h-[280px] flex items-end p-4 rounded-lg overflow-hidden group shadow-lg">
             {post.mainImage && (
               <img 
                 src={urlFor(post.mainImage).url()} 
