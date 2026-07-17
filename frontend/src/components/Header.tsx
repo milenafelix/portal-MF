@@ -1,110 +1,125 @@
 "use client"
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
-  const [dataAtual, setDataAtual] = useState<Date | null>(null)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentTime, setCurrentTime] = useState('')
+  const router = useRouter()
 
+  // Atualiza o relógio digital do topo
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setDataAtual(new Date())
-    }, 1000)
-
-    return () => window.clearInterval(timer)
+    const updateClock = () => {
+      const now = new Date()
+      setCurrentTime(now.toLocaleTimeString('pt-BR', { hour12: false }))
+    }
+    updateClock()
+    const timer = setInterval(updateClock, 1000)
+    return () => clearInterval(timer)
   }, [])
 
-  const dataFormatada = dataAtual
-    ? dataAtual
-        .toLocaleDateString('pt-BR', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        })
-        .replace('.', '')
-    : ''
-  const horaFormatada = dataAtual ? dataAtual.toLocaleTimeString('pt-BR') : ''
+  // Função que dispara quando você aperta "Enter" ou "Ir"
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/busca?q=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+      setSearchQuery('')
+    }
+  }
+
+  const menuItems = [
+    { label: 'FILME', href: '/categoria/filme' },
+    { label: 'SÉRIES', href: '/categoria/series' },
+    { label: 'LITERATURA', href: '/categoria/literatura' },
+    { label: 'GAMES', href: '/categoria/games' },
+    { label: 'TECNOLOGIA', href: '/categoria/tecnologia' },
+    { label: 'EVENTOS', href: '/categoria/eventos' },
+  ]
 
   return (
-    <header className="w-full font-sans">
+    <header className="w-full bg-black font-sans">
       
-      {/* 1. BARRA SUPERIOR: Data, Hora e Redes Sociais */}
-      <div className="bg-black text-gray-300 text-xs hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-10">
-          
-          {/* Lado Esquerdo: Data e Relógio roxo */}
-          <div className="flex items-center gap-3">
-            {dataAtual ? (
-              <>
-                <span className="capitalize">{dataFormatada}</span>
-                <span className="bg-purple-600 text-white font-bold px-2 py-1 rounded-sm">
-                  {horaFormatada}
-                </span>
-              </>
-            ) : (
-              <div className="h-6 w-32" />
-            )}
+      {/* BARRA SUPERIOR (Data, Hora e Redes) - CORRIGIDA */}
+      <div className="border-b border-gray-900">
+        {/* O max-w-7xl aqui garante que fique perfeitamente alinhado com o logo abaixo */}
+        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+          <div className="flex items-center gap-4 text-xs font-bold py-2">
+            <span className="text-gray-300 capitalize">
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '')}
+            </span>
+            <span className="bg-[#9333ea] text-white px-2 py-1 rounded-sm tracking-widest">
+              {currentTime || '00:00:00'}
+            </span>
           </div>
-
-          {/* Lado Direito: Redes Sociais */}
-          <div className="flex h-full">
-            {/* <a href="#" className="w-10 h-full flex items-center justify-center bg-blue-600 text-white hover:opacity-80 transition-opacity">
-               <span className="font-bold">f</span>
-            </a> 
-            <a href="#" className="w-10 h-full flex items-center justify-center bg-sky-500 text-white hover:opacity-80 transition-opacity">
-               <span className="font-bold">tw</span>
-            </a> */}
-            <a href="#" className="w-10 h-full flex items-center justify-center bg-pink-600 text-white hover:opacity-80 transition-opacity">
-               <span className="font-bold">IG</span>
+          <div>
+            <a href="#" className="bg-pink-600 text-white text-xs font-bold px-3 py-2 uppercase inline-block hover:bg-pink-500 transition-colors">
+              IG
             </a>
           </div>
         </div>
       </div>
 
-      {/* 2. BARRA PRINCIPAL: Logo e Navegação */}
-      <div className="bg-black sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex h-16 items-center">
-          
-          {/* Botão Home roxo 
-          <Link href="/" className="h-full w-16 bg-purple-600 flex items-center justify-center text-white hover:bg-purple-500 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-          </Link>*/}
+      {/* BARRA PRINCIPAL (Logo, Menu e Busca) */}
+      <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+        
+        {/* Logo */}
+        <Link href="/" className="text-3xl font-extrabold tracking-tighter text-white">
+          PORTAL<span className="text-purple-500">MF</span>
+        </Link>
 
-          {/* O Logo do Site */}
-          <Link href="/" className="text-2xl font-extrabold tracking-tighter text-white ml-6 mr-10">
-            PORTAL<span className="text-purple-500">MF</span>
-          </Link>
-          
-          {/* Menu de Categorias */}
-          <nav className="hidden md:flex space-x-6 text-sm font-extrabold text-gray-200 tracking-wider">
-            <Link href="/resenhas-e-criticas" className="hover:text-purple-400 transition-colors py-5">
-              ANÁLISES ▾
+        {/* Menu de Navegação */}
+        <nav className="hidden md:flex gap-6 items-center">
+          {menuItems.map((item) => (
+            <Link 
+              key={item.label} 
+              href={item.href} 
+              className="text-white font-extrabold text-sm uppercase tracking-widest hover:text-purple-400 transition-colors"
+            >
+              {item.label}
             </Link>
-            <Link href="#" className="hover:text-purple-400 transition-colors py-5">
-              FILMES
-            </Link>
-            <Link href="#" className="hover:text-purple-400 transition-colors py-5">
-              SÉRIES
-            </Link>
-            <Link href="#" className="hover:text-purple-400 transition-colors py-5">
-              GAMES
-            </Link>
-            <Link href="#" className="hover:text-purple-400 transition-colors py-5">
-              EVENTOS
-            </Link>
-          </nav>
+          ))}
+        </nav>
 
-          {/* Ícone de Busca */}
-          <div className="ml-auto mr-4 flex items-center cursor-pointer text-gray-300 hover:text-purple-400 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-
+        {/* Sistema de Busca */}
+        <div className="relative flex items-center">
+          {isSearchOpen ? (
+            <form onSubmit={handleSearch} className="flex items-center animate-fade-in">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar no portal..."
+                autoFocus
+                className="bg-gray-900 text-white border border-purple-600 rounded-l px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-purple-500 w-48 md:w-64"
+              />
+              <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-r transition-colors">
+                Ir
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setIsSearchOpen(false)}
+                className="ml-3 text-gray-400 hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </form>
+          ) : (
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="text-white hover:text-purple-400 transition-colors p-2"
+              aria-label="Abrir busca"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </button>
+          )}
         </div>
+
       </div>
     </header>
   )
